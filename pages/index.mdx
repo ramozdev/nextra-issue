@@ -1,11 +1,38 @@
-# Introduction
- 
-Welcome to Nextra! This is a basic docs template. You can use it as a starting point for your own project :)
+# TailwindCSS preflight leaked
 
-## What is Nextra?
+If I create a `<button>{:html}` and add the `type="button"{:html}` attribute, the background color of the button is set to `transparent` by the [TailwindCSS Preflight](https://unpkg.com/tailwindcss@3.3.1/src/css/preflight.css). This is not the case if I use the `button` tag directly.
 
-A **simple**, **powerful** and **flexible** site generation framework with everything you love from Next.js.
+## Without `type="button"`
 
-## Documentation
+<button className='bg-blue-700 text-white p-4'>Button</button>
 
-The documentation is available at [https://nextra.site](https://nextra.site).
+```html copy
+<button className="bg-blue-700 text-white p-4">Button</button>
+```
+
+## With `type="button"`
+
+<button type='button' className='bg-blue-700 text-white p-4'>
+  Button
+</button>
+
+```html copy
+<button type="button" className="bg-blue-700 text-white p-4">Button</button>
+```
+
+Inspect this button in your browser to see the preflight CSS applied with a higher specificity than the TailwindCSS classes.
+
+```css copy
+button,
+[type='button'],
+[type='reset'],
+[type='submit'] {
+  -webkit-appearance: button;
+  background-color: transparent;
+  background-image: none;
+}
+```
+
+This behavior is not observed using TailwindCSS without Nextra.
+
+See this [live example](https://play.tailwindcss.com/xm6dhrg1iO).
